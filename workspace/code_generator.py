@@ -2,19 +2,103 @@
 Code Generator for SimpleCalc Language
 =======================================
 
-This module implements a code generator that converts an AST into
+This module should implement a code generator that converts an AST into
 assembly code for the SimpleVM architecture.
 
 INPUT: AST dictionary (from parser.py)
 OUTPUT: Assembly code string (for SimpleVM)
 
 The instruction set is defined in task/instruction-set.txt
+
+IMPORTANT: The agent must implement the `generate` function below.
 """
 
 from typing import Any
 
 # ==============================================================================
-# Symbol Table
+# SimpleVM Instruction Reference (see task/instruction-set.txt for details)
+# ==============================================================================
+#
+# Data Movement:
+#   LOAD Rd, #imm       - Load immediate into register
+#   LOAD Rd, [addr]     - Load from memory
+#   STORE Rs, [addr]    - Store to memory
+#   MOV Rd, Rs          - Copy register
+#
+# Arithmetic:
+#   ADD Rd, Rs1, Rs2    - Rd = Rs1 + Rs2
+#   SUB Rd, Rs1, Rs2    - Rd = Rs1 - Rs2
+#   MUL Rd, Rs1, Rs2    - Rd = Rs1 * Rs2
+#   DIV Rd, Rs1, Rs2    - Rd = Rs1 / Rs2
+#   NEG Rd, Rs          - Rd = -Rs
+#
+# Comparison:
+#   CMP Rs1, Rs2        - Compare, set flags
+#
+# Control Flow:
+#   JMP label           - Unconditional jump
+#   JEQ label           - Jump if equal
+#   JNE label           - Jump if not equal
+#   JLT label           - Jump if less than
+#   JGT label           - Jump if greater than
+#   JLE label           - Jump if less or equal
+#   JGE label           - Jump if greater or equal
+#
+# Stack:
+#   PUSH Rs             - Push register to stack
+#   POP Rd              - Pop stack to register
+#
+# I/O:
+#   PRINT Rs            - Output register value
+#
+# Control:
+#   HALT                - Stop execution
+#
+# ==============================================================================
+
+
+def generate(ast: dict[str, Any]) -> str:
+    """
+    Generate assembly code from an AST.
+
+    Args:
+        ast: The AST dictionary from the parser
+
+    Returns:
+        Assembly code string for SimpleVM
+
+    Example:
+        >>> ast = {
+        ...     "type": "Program",
+        ...     "statements": [
+        ...         {
+        ...             "type": "Assignment",
+        ...             "variable": "x",
+        ...             "value": {"type": "Integer", "value": 5}
+        ...         }
+        ...     ]
+        ... }
+        >>> print(generate(ast))
+        LOAD R0, #5
+        STORE R0, [0]
+        HALT
+    """
+    # TODO: Implement this function
+    #
+    # Implementation hints:
+    # 1. Traverse the AST recursively
+    # 2. Maintain a symbol table mapping variable names to memory addresses
+    # 3. Use registers R0-R3 for computation (need register allocation)
+    # 4. Generate appropriate instructions for each AST node type
+    # 5. Handle expression evaluation (may need stack for complex expressions)
+    # 6. Generate labels for control flow (if-else)
+    # 7. Always end with HALT
+    #
+    raise NotImplementedError("Code generator not yet implemented - this is your task!")
+
+
+# ==============================================================================
+# Optional: Helper classes for implementation
 # ==============================================================================
 
 
@@ -40,21 +124,44 @@ class SymbolTable:
         return self.variables[name]
 
 
-# ==============================================================================
-# Code Generator
-# ==============================================================================
+class RegisterAllocator:
+    """
+    Simple register allocator for R0-R3.
+
+    Strategy: Use R0 for results, R1-R3 for temporaries.
+    For complex expressions, use the stack.
+    """
+
+    def __init__(self):
+        self.registers = ["R0", "R1", "R2", "R3"]
+        self.in_use = [False, False, False, False]
+
+    def allocate(self) -> str:
+        """Allocate a free register."""
+        for i, used in enumerate(self.in_use):
+            if not used:
+                self.in_use[i] = True
+                return self.registers[i]
+        raise RuntimeError("No free registers - use stack")
+
+    def free(self, reg: str):
+        """Free a register."""
+        idx = self.registers.index(reg)
+        self.in_use[idx] = False
+
+    def free_all(self):
+        """Free all registers."""
+        self.in_use = [False, False, False, False]
 
 
 class CodeGenerator:
     """
     Generates SimpleVM assembly from AST.
-
-    Uses a stack-based approach for expression evaluation to handle
-    arbitrarily complex expressions with only 4 registers.
     """
 
     def __init__(self):
         self.symbols = SymbolTable()
+        self.registers = RegisterAllocator()
         self.code: list[str] = []
         self.label_counter = 0
 
@@ -74,179 +181,18 @@ class CodeGenerator:
 
     def generate_program(self, ast: dict) -> str:
         """Generate code for the entire program."""
-        assert ast["type"] == "Program"
-
-        for stmt in ast["statements"]:
-            self.generate_statement(stmt)
-
-        self.emit("HALT")
-        return "\n".join(self.code)
+        # TODO: Implement code generation
+        raise NotImplementedError()
 
     def generate_statement(self, stmt: dict):
         """Generate code for a statement."""
-        stmt_type = stmt["type"]
-
-        if stmt_type == "Assignment":
-            self._generate_assignment(stmt)
-        elif stmt_type == "Print":
-            self._generate_print(stmt)
-        elif stmt_type == "If":
-            self._generate_if(stmt)
-        else:
-            raise ValueError(f"Unknown statement type: {stmt_type}")
-
-    def _generate_assignment(self, stmt: dict):
-        """Generate code for: variable = expression"""
-        var_name = stmt["variable"]
-        addr = self.symbols.get_address(var_name)
-
-        # Evaluate expression into R0
-        self.generate_expression(stmt["value"], "R0")
-
-        # Store result to memory
-        self.emit(f"STORE R0, [{addr}]")
-
-    def _generate_print(self, stmt: dict):
-        """Generate code for: print(expression)"""
-        # Evaluate expression into R0
-        self.generate_expression(stmt["value"], "R0")
-
-        # Print the result
-        self.emit("PRINT R0")
-
-    def _generate_if(self, stmt: dict):
-        """Generate code for: if (condition) { ... } [else { ... }]"""
-        condition = stmt["condition"]
-        then_body = stmt["then_body"]
-        else_body = stmt["else_body"]
-
-        # Generate labels
-        else_label = self.new_label("else")
-        end_label = self.new_label("endif")
-
-        # Evaluate condition
-        self._generate_condition(condition, else_label)
-
-        # Generate then body
-        for s in then_body:
-            self.generate_statement(s)
-
-        if else_body:
-            self.emit(f"JMP {end_label}")
-
-        # Generate else body
-        self.emit_label(else_label)
-        if else_body:
-            for s in else_body:
-                self.generate_statement(s)
-            self.emit_label(end_label)
-
-    def _generate_condition(self, cond: dict, false_label: str):
-        """Generate code for a condition, jumping to false_label if false."""
-        assert cond["type"] == "Condition"
-
-        # Evaluate left operand into R0
-        self.generate_expression(cond["left"], "R0")
-        # Save R0 to stack
-        self.emit("PUSH R0")
-
-        # Evaluate right operand into R1
-        self.generate_expression(cond["right"], "R1")
-
-        # Restore left operand from stack
-        self.emit("POP R0")
-
-        # Compare
-        self.emit("CMP R0, R1")
-
-        # Jump based on operator (jump if condition is FALSE)
-        op = cond["operator"]
-        if op == "==":
-            self.emit(f"JNE {false_label}")  # Jump if NOT equal
-        elif op == "!=":
-            self.emit(f"JEQ {false_label}")  # Jump if equal
-        elif op == "<":
-            self.emit(f"JGE {false_label}")  # Jump if >= (not less)
-        elif op == ">":
-            self.emit(f"JLE {false_label}")  # Jump if <= (not greater)
-        elif op == "<=":
-            self.emit(f"JGT {false_label}")  # Jump if > (not less or equal)
-        elif op == ">=":
-            self.emit(f"JLT {false_label}")  # Jump if < (not greater or equal)
-        else:
-            raise ValueError(f"Unknown comparison operator: {op}")
+        # TODO: Implement for each statement type
+        raise NotImplementedError()
 
     def generate_expression(self, expr: dict, target_reg: str):
         """Generate code for an expression, result in target_reg."""
-        expr_type = expr["type"]
-
-        if expr_type == "Integer":
-            self.emit(f"LOAD {target_reg}, #{expr['value']}")
-
-        elif expr_type == "Variable":
-            addr = self.symbols.get_address(expr["name"])
-            self.emit(f"LOAD {target_reg}, [{addr}]")
-
-        elif expr_type == "UnaryOp":
-            self._generate_unary_op(expr, target_reg)
-
-        elif expr_type == "BinaryOp":
-            self._generate_binary_op(expr, target_reg)
-
-        else:
-            raise ValueError(f"Unknown expression type: {expr_type}")
-
-    def _generate_unary_op(self, expr: dict, target_reg: str):
-        """Generate code for unary operations."""
-        assert expr["operator"] == "-"  # Only unary minus supported
-
-        # Evaluate operand
-        self.generate_expression(expr["operand"], target_reg)
-
-        # Negate
-        self.emit(f"NEG {target_reg}, {target_reg}")
-
-    def _generate_binary_op(self, expr: dict, target_reg: str):
-        """Generate code for binary operations."""
-        op = expr["operator"]
-        left = expr["left"]
-        right = expr["right"]
-
-        # Evaluate left operand into target register
-        self.generate_expression(left, target_reg)
-
-        # Save left result to stack
-        self.emit(f"PUSH {target_reg}")
-
-        # Evaluate right operand into R1 (or R0 if target is R1)
-        temp_reg = "R1" if target_reg != "R1" else "R0"
-        self.generate_expression(right, temp_reg)
-
-        # Restore left operand from stack into R2
-        self.emit("POP R2")
-
-        # Perform operation: target = left op right
-        op_instr = {"+": "ADD", "-": "SUB", "*": "MUL", "/": "DIV"}[op]
-        self.emit(f"{op_instr} {target_reg}, R2, {temp_reg}")
-
-
-# ==============================================================================
-# Main Generate Function
-# ==============================================================================
-
-
-def generate(ast: dict[str, Any]) -> str:
-    """
-    Generate assembly code from an AST.
-
-    Args:
-        ast: The AST dictionary from the parser
-
-    Returns:
-        Assembly code string for SimpleVM
-    """
-    generator = CodeGenerator()
-    return generator.generate_program(ast)
+        # TODO: Implement for each expression type
+        raise NotImplementedError()
 
 
 # ==============================================================================

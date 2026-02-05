@@ -28,6 +28,7 @@ sys.path.insert(0, str(poc_dir.parent))
 @dataclass
 class TestResult:
     """Result of running a single test."""
+
     test_name: str
     passed: bool
     error: str | None = None
@@ -78,60 +79,38 @@ class TestRunner:
         try:
             source, expected = self.load_test(test_name)
         except Exception as e:
-            return TestResult(
-                test_name=test_name,
-                passed=False,
-                error=f"Failed to load test: {e}"
-            )
+            return TestResult(test_name=test_name, passed=False, error=f"Failed to load test: {e}")
         # Try to import the compiler modules
         try:
             from workspace.code_generator import generate
             from workspace.parser import parse
         except ImportError as e:
             return TestResult(
-                test_name=test_name,
-                passed=False,
-                error=f"Failed to import compiler: {e}"
+                test_name=test_name, passed=False, error=f"Failed to import compiler: {e}"
             )
         # Parse source to AST
         try:
             ast = parse(source)
         except NotImplementedError:
-            return TestResult(
-                test_name=test_name,
-                passed=False,
-                error="Parser not implemented"
-            )
+            return TestResult(test_name=test_name, passed=False, error="Parser not implemented")
         except Exception as e:
-            return TestResult(
-                test_name=test_name,
-                passed=False,
-                error=f"Parse error: {e}"
-            )
+            return TestResult(test_name=test_name, passed=False, error=f"Parse error: {e}")
         # Generate assembly
         try:
             assembly = generate(ast)
         except NotImplementedError:
             return TestResult(
-                test_name=test_name,
-                passed=False,
-                error="Code generator not implemented"
+                test_name=test_name, passed=False, error="Code generator not implemented"
             )
         except Exception as e:
             return TestResult(
-                test_name=test_name,
-                passed=False,
-                error=f"Code generation error: {e}"
+                test_name=test_name, passed=False, error=f"Code generation error: {e}"
             )
         # Execute assembly
         try:
             state = self.emulator.run(assembly)
         except EmulatorError as e:
-            return TestResult(
-                test_name=test_name,
-                passed=False,
-                error=f"Emulator error: {e}"
-            )
+            return TestResult(test_name=test_name, passed=False, error=f"Emulator error: {e}")
         # Verify results
         return self._verify_results(test_name, state, expected)
 
@@ -161,7 +140,7 @@ class TestRunner:
                 expected_output=expected_output,
                 actual_output=state.output,
                 expected_variables=expected_vars,
-                actual_variables=actual_vars
+                actual_variables=actual_vars,
             )
 
         return TestResult(
@@ -170,7 +149,7 @@ class TestRunner:
             expected_output=expected_output,
             actual_output=state.output,
             expected_variables=expected_vars,
-            actual_variables=actual_vars
+            actual_variables=actual_vars,
         )
 
     def run_all_tests(self) -> list[TestResult]:
@@ -218,11 +197,7 @@ def run_with_assembly(assembly: str, expected: dict, test_name: str = "manual") 
     try:
         state = emulator.run(assembly)
     except EmulatorError as e:
-        return TestResult(
-            test_name=test_name,
-            passed=False,
-            error=f"Emulator error: {e}"
-        )
+        return TestResult(test_name=test_name, passed=False, error=f"Emulator error: {e}")
 
     # Verify output
     expected_output = expected.get("output", [])
@@ -232,14 +207,14 @@ def run_with_assembly(assembly: str, expected: dict, test_name: str = "manual") 
             passed=False,
             error=f"Output mismatch: expected {expected_output}, got {state.output}",
             expected_output=expected_output,
-            actual_output=state.output
+            actual_output=state.output,
         )
 
     return TestResult(
         test_name=test_name,
         passed=True,
         expected_output=expected_output,
-        actual_output=state.output
+        actual_output=state.output,
     )
 
 
@@ -261,7 +236,7 @@ def verify_emulator():
                 PRINT R0
                 HALT
             """,
-            "expected": {"output": [8], "variables": {"x": 8}}
+            "expected": {"output": [8], "variables": {"x": 8}},
         },
         # Test 2: Arithmetic with precedence
         {
@@ -294,7 +269,7 @@ def verify_emulator():
 
                 HALT
             """,
-            "expected": {"output": [14, 20, 3]}
+            "expected": {"output": [14, 20, 3]},
         },
         # Test 3: If-else
         {
@@ -321,7 +296,7 @@ def verify_emulator():
                 PRINT R2
                 HALT
             """,
-            "expected": {"output": [5]}
+            "expected": {"output": [5]},
         },
         # Test 4: Unary minus
         {
@@ -354,7 +329,7 @@ def verify_emulator():
 
                 HALT
             """,
-            "expected": {"output": [-5, -7, -10]}
+            "expected": {"output": [-5, -7, -10]},
         },
     ]
     all_passed = True

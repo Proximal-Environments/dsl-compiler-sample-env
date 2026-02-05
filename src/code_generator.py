@@ -101,6 +101,7 @@ def generate(ast: dict[str, Any]) -> str:
 # Optional: Helper classes for implementation
 # ==============================================================================
 
+
 class SymbolTable:
     """
     Maps variable names to memory addresses.
@@ -132,7 +133,7 @@ class RegisterAllocator:
     """
 
     def __init__(self):
-        self.registers = ['R0', 'R1', 'R2', 'R3']
+        self.registers = ["R0", "R1", "R2", "R3"]
         self.in_use = [False, False, False, False]
 
     def allocate(self) -> str:
@@ -210,14 +211,11 @@ if __name__ == "__main__":
                     "type": "BinaryOp",
                     "operator": "+",
                     "left": {"type": "Integer", "value": 3},
-                    "right": {"type": "Integer", "value": 5}
-                }
+                    "right": {"type": "Integer", "value": 5},
+                },
             },
-            {
-                "type": "Print",
-                "value": {"type": "Variable", "name": "x"}
-            }
-        ]
+            {"type": "Print", "value": {"type": "Variable", "name": "x"}},
+        ],
     }
     try:
         asm = generate(test_ast)

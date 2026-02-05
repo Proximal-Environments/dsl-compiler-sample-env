@@ -13,6 +13,7 @@ from typing import Any
 @dataclass
 class EmulatorState:
     """Represents the complete state of the emulator."""
+
     registers: dict[str, int] = field(default_factory=lambda: {"R0": 0, "R1": 0, "R2": 0, "R3": 0})
     memory: list[int] = field(default_factory=lambda: [0] * 256)
     stack: list[int] = field(default_factory=list)
@@ -38,6 +39,7 @@ class EmulatorState:
 
 class EmulatorError(Exception):
     """Error during emulation."""
+
     pass
 
 
@@ -81,22 +83,22 @@ class SimpleVMEmulator:
         self.instructions = []
         self.labels = {}
 
-        lines = assembly.strip().split('\n')
+        lines = assembly.strip().split("\n")
         instruction_index = 0
 
         for line in lines:
             # Remove comments
-            if '//' in line:
-                line = line[:line.index('//')]
-            if ';' in line:
-                line = line[:line.index(';')]
+            if "//" in line:
+                line = line[: line.index("//")]
+            if ";" in line:
+                line = line[: line.index(";")]
             line = line.strip()
 
             if not line:
                 continue
 
             # Check for label
-            if line.endswith(':'):
+            if line.endswith(":"):
                 label = line[:-1].strip()
                 self.labels[label] = instruction_index
                 continue
@@ -112,7 +114,7 @@ class SimpleVMEmulator:
     def _tokenize_instruction(self, line: str) -> list[str]:
         """Tokenize an instruction line."""
         # Replace commas with spaces for easier splitting
-        line = line.replace(',', ' ')
+        line = line.replace(",", " ")
         parts = line.split()
         return [p.strip() for p in parts if p.strip()]
 
@@ -193,33 +195,33 @@ class SimpleVMEmulator:
         Types: 'reg', 'imm', 'mem', 'indirect', 'label'
         """
         operand = operand.strip()
-        if operand.startswith('#'):
+        if operand.startswith("#"):
             # Immediate value
-            return ('imm', int(operand[1:]))
-        elif operand.startswith('[') and operand.endswith(']'):
+            return ("imm", int(operand[1:]))
+        elif operand.startswith("[") and operand.endswith("]"):
             # Memory address
-            return ('mem', int(operand[1:-1]))
-        elif operand.startswith('@'):
+            return ("mem", int(operand[1:-1]))
+        elif operand.startswith("@"):
             # Indirect addressing
-            return ('indirect', operand[1:])
-        elif operand.upper() in ('R0', 'R1', 'R2', 'R3'):
+            return ("indirect", operand[1:])
+        elif operand.upper() in ("R0", "R1", "R2", "R3"):
             # Register
-            return ('reg', operand.upper())
+            return ("reg", operand.upper())
         else:
             # Label
-            return ('label', operand)
+            return ("label", operand)
 
     def _get_value(self, operand: str) -> int:
         """Get the value of an operand."""
         op_type, value = self._parse_operand(operand)
 
-        if op_type == 'imm':
+        if op_type == "imm":
             return value
-        elif op_type == 'reg':
+        elif op_type == "reg":
             return self.state.registers[value]
-        elif op_type == 'mem':
+        elif op_type == "mem":
             return self.state.memory[value]
-        elif op_type == 'indirect':
+        elif op_type == "indirect":
             addr = self.state.registers[value]
             return self.state.memory[addr]
         else:
@@ -238,9 +240,9 @@ class SimpleVMEmulator:
         value = self.state.registers[rs]
 
         op_type, addr = self._parse_operand(dest)
-        if op_type == 'mem':
+        if op_type == "mem":
             self.state.memory[addr] = value
-        elif op_type == 'indirect':
+        elif op_type == "indirect":
             mem_addr = self.state.registers[addr]
             self.state.memory[mem_addr] = value
         else:
@@ -294,8 +296,8 @@ class SimpleVMEmulator:
         val1 = self._get_value(args[0])
         val2 = self._get_value(args[1])
         diff = val1 - val2
-        self.state.zero_flag = (diff == 0)
-        self.state.neg_flag = (diff < 0)
+        self.state.zero_flag = diff == 0
+        self.state.neg_flag = diff < 0
 
     def _get_label_pc(self, label: str) -> int:
         """Get PC for a label."""

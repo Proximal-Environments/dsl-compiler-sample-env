@@ -89,8 +89,10 @@ def parse(source_code: str) -> dict[str, Any]:
 # Optional: Helper classes for implementation
 # ==============================================================================
 
+
 class Token:
     """Represents a lexical token."""
+
     def __init__(self, type_: str, value: Any, line: int = 0, col: int = 0):
         self.type = type_
         self.value = value
@@ -106,7 +108,7 @@ class Lexer:
     Tokenizer for SimpleCalc language.
 
     Token types:
-        INTEGER, IDENTIFIER, 
+        INTEGER, IDENTIFIER,
         PLUS, MINUS, STAR, SLASH,
         LPAREN, RPAREN, LBRACE, RBRACE,
         ASSIGN, SEMICOLON, COMMA,
@@ -155,6 +157,7 @@ if __name__ == "__main__":
     try:
         ast = parse(test_code)
         import json
+
         print(json.dumps(ast, indent=2))
     except NotImplementedError as e:
         print(f"Not implemented: {e}")

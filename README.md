@@ -59,5 +59,7 @@ Target: Simple register-based machine with 4 registers (R0-R3), memory, and basi
 
 ## Summary of POC
 
+In cursor:
+
 - current environment : Opus 4.5 and Codex 5.2 extra high pass
 - Hard mode: Sonnet 4.5 fails, Opus 4.5 passes

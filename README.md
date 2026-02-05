@@ -48,3 +48,16 @@ This POC uses a simple arithmetic language with:
 - Simple if-else control flow
 
 Target: Simple register-based machine with 4 registers (R0-R3), memory, and basic arithmetic instructions.
+
+## Hard mode
+
+- Removes some helper comments, can just use `git apply hard.patch`
+
+## Reference Solution
+
+- Sample solution: in `solution.patch`
+
+## Summary of POC
+
+- current environment : Opus 4.5 and Codex 5.2 extra high pass
+- Hard mode: Sonnet 4.5 fails, Opus 4.5 passes

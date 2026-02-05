@@ -8,16 +8,16 @@ This POC demonstrates the core idea of the DSL Compiler Benchmark:
 
 ```
 POC/
-├── task/
-│   ├── grammar.ebnf          # EBNF grammar defining the language syntax
-│   └── instruction-set.txt   # Target architecture instruction set
 ├── tests/
 │   ├── test_001.src          # Test program source files
 │   ├── test_001.expected     # Expected final emulator state
 │   └── ...
 ├── src/
 │   ├── parser.py             # [TO IMPLEMENT] Parser: source → AST
-│   └── code_generator.py     # [TO IMPLEMENT] Code gen: AST → Assembly
+│   ├── code_generator.py     # [TO IMPLEMENT] Code gen: AST → Assembly
+│   └── task/
+│       ├── grammar.ebnf          # EBNF grammar defining the language syntax
+│       └── instruction-set.txt   # Target architecture instruction set
 └── verify/
     ├── emulator.py           # Emulator to execute assembly
     └── runner.py             # Test runner to verify correctness
@@ -34,7 +34,7 @@ POC/
 
 ```bash
 # After implementing parser.py and code_generator.py:
-python -m POC.verify.runner
+python -m verify.runner
 ```
 
 ## Language Overview (This POC)

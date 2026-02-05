@@ -30,16 +30,6 @@ Implement two functions:
 - All programs must end with `HALT`
 - Registers R0-R3 are available for computation
 
-## Testing
-
-Run the test suite to verify your implementation:
-
-```bash
-python -m POC.verify.runner
-```
-
-All 6 tests should pass when your implementation is correct.
-
 ## Example
 
 **Input Source (test_001):**
@@ -94,16 +84,10 @@ HALT
 
 ```
 POC/
-├── task/
-│   ├── grammar.ebnf          # Language grammar (READ THIS)
-│   └── instruction-set.txt   # Target machine instructions (READ THIS)
-├── tests/
-│   ├── test_*.src            # Test programs
-│   └── test_*.expected       # Expected results
 ├── src/
 │   ├── parser.py             # IMPLEMENT THIS
-│   └── code_generator.py     # IMPLEMENT THIS
-└── verify/
-    ├── emulator.py           # Executes assembly (provided)
-    └── runner.py             # Runs tests (provided)
+│   ├── code_generator.py     # IMPLEMENT THIS
+│   └── task/
+        ├── grammar.ebnf          # Language grammar (READ THIS)
+        └── instruction-set.txt   # Target machine instructions (READ THIS)
 ```

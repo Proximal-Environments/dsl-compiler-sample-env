@@ -25,7 +25,7 @@ This POC demonstrates the core idea of the DSL Compiler Benchmark:
 
 ## How It Works
 
-1. **Task Definition**: The `task/` folder defines the language (grammar) and target machine (instruction set)
+1. **Task Definition**: The `workspace/task/` folder defines the language (grammar) and target machine (instruction set)
 2. **Test Cases**: The `tests/` folder contains programs in the toy language with expected outputs
 3. **Agent Implements**: The agent must implement `parser.py` and `code_generator.py`
 4. **Verification**: The `verify/` folder runs the compiled code and checks against expected state

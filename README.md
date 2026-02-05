@@ -7,12 +7,12 @@ This POC demonstrates the core idea of the DSL Compiler Benchmark:
 ## Structure
 
 ```
-POC/
+(project root)/
 ├── tests/
 │   ├── test_001.src          # Test program source files
 │   ├── test_001.expected     # Expected final emulator state
 │   └── ...
-├── src/
+├── workspace/
 │   ├── parser.py             # [TO IMPLEMENT] Parser: source → AST
 │   ├── code_generator.py     # [TO IMPLEMENT] Code gen: AST → Assembly
 │   └── task/

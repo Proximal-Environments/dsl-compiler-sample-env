@@ -85,8 +85,8 @@ class TestRunner:
             )
         # Try to import the compiler modules
         try:
-            from src.code_generator import generate
-            from src.parser import parse
+            from workspace.code_generator import generate
+            from workspace.parser import parse
         except ImportError as e:
             return TestResult(
                 test_name=test_name,

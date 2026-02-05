@@ -1,0 +1,7 @@
+{
+    "variables": {
+        "x": 8
+    },
+    "output": [8],
+    "status": "success"
+}

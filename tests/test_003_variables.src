@@ -1,0 +1,9 @@
+// Test 003: Variable Usage
+// Variables can be used in expressions
+
+x = 10;
+y = 20;
+z = x + y;
+w = z * 2 - x;
+print(z);
+print(w);

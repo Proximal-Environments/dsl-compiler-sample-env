@@ -1,0 +1,50 @@
+# DSL Compiler Benchmark - Proof of Concept
+
+This POC demonstrates the core idea of the DSL Compiler Benchmark:
+
+**Task for AI Agent:** Given an EBNF grammar and an instruction set for a toy programming language → write a compiler (parser + code generator) for this language.
+
+## Structure
+
+```
+POC/
+├── task/
+│   ├── grammar.ebnf          # EBNF grammar defining the language syntax
+│   └── instruction-set.txt   # Target architecture instruction set
+├── tests/
+│   ├── test_001.src          # Test program source files
+│   ├── test_001.expected     # Expected final emulator state
+│   └── ...
+├── src/
+│   ├── parser.py             # [TO IMPLEMENT] Parser: source → AST
+│   └── code_generator.py     # [TO IMPLEMENT] Code gen: AST → Assembly
+└── verify/
+    ├── emulator.py           # Emulator to execute assembly
+    └── runner.py             # Test runner to verify correctness
+```
+
+## How It Works
+
+1. **Task Definition**: The `task/` folder defines the language (grammar) and target machine (instruction set)
+2. **Test Cases**: The `tests/` folder contains programs in the toy language with expected outputs
+3. **Agent Implements**: The agent must implement `parser.py` and `code_generator.py`
+4. **Verification**: The `verify/` folder runs the compiled code and checks against expected state
+
+## Running the POC
+
+```bash
+# After implementing parser.py and code_generator.py:
+python -m POC.verify.runner
+```
+
+## Language Overview (This POC)
+
+This POC uses a simple arithmetic language with:
+
+- Integer literals and variables
+- Arithmetic operations: `+`, `-`, `*`, `/`
+- Assignment statements
+- Print statements
+- Simple if-else control flow
+
+Target: Simple register-based machine with 4 registers (R0-R3), memory, and basic arithmetic instructions.

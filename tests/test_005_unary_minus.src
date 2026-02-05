@@ -1,0 +1,10 @@
+// Test 005: Unary Minus
+// Test negation operator
+
+a = 5;
+b = -a;
+c = -10 + 3;
+d = 5 * -2;
+print(b);
+print(c);
+print(d);

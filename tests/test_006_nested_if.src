@@ -1,0 +1,22 @@
+// Test 006: Nested Conditionals
+// Test nested if-else statements
+
+a = 15;
+b = 10;
+c = 5;
+
+if (a > b) {
+    if (b > c) {
+        max = a;
+    } else {
+        max = a;
+    }
+} else {
+    if (b > c) {
+        max = b;
+    } else {
+        max = c;
+    }
+}
+
+print(max);

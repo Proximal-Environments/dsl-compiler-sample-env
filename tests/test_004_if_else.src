@@ -1,0 +1,13 @@
+// Test 004: If-Else Control Flow
+// Test conditional execution
+
+x = 10;
+y = 5;
+
+if (x > y) {
+    result = x - y;
+} else {
+    result = y - x;
+}
+
+print(result);

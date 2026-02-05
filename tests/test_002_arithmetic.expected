@@ -1,0 +1,9 @@
+{
+    "variables": {
+        "a": 14,
+        "b": 20,
+        "c": 3
+    },
+    "output": [14, 20, 3],
+    "status": "success"
+}

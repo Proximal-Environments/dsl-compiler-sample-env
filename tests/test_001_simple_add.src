@@ -1,0 +1,5 @@
+// Test 001: Simple Addition
+// Calculate 3 + 5 and print the result
+
+x = 3 + 5;
+print(x);

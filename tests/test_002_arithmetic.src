@@ -1,0 +1,9 @@
+// Test 002: Multiple Arithmetic Operations
+// Test operator precedence: * before +
+
+a = 2 + 3 * 4;
+b = (2 + 3) * 4;
+c = 10 / 3;
+print(a);
+print(b);
+print(c);

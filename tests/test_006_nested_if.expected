@@ -1,0 +1,10 @@
+{
+    "variables": {
+        "a": 15,
+        "b": 10,
+        "c": 5,
+        "max": 15
+    },
+    "output": [15],
+    "status": "success"
+}
